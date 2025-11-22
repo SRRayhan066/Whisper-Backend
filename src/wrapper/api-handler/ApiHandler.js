@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/config/db";
+import { connectRedis } from "@/config/redis";
 import { HttpStatusCode } from "@/constants/HttpStatusCode";
 import { ApiError } from "../api-error/ApiError";
 
@@ -7,6 +8,7 @@ export const apiHandler = (handler) => {
   return async (req, context) => {
     try {
       await connectDB();
+      await connectRedis();
 
       const result = await handler(req, context);
 
@@ -15,19 +17,16 @@ export const apiHandler = (handler) => {
       const response = NextResponse.json(
         {
           status,
-          data: result.data || result,
+          data: result.data || null,
           message: result.message,
         },
         { status }
       );
 
-      if ("token" in result) {
-        response.cookies.set({
-          name: "auth_token",
-          value: result.token,
-          httpOnly: true,
-          maxAge: result.token === "" ? 0 : undefined,
-          path: "/",
+      // New flexible cookie handling
+      if (Array.isArray(result.cookies)) {
+        result.cookies.forEach((cookie) => {
+          response.cookies.set(cookie.name, cookie.value, cookie.options);
         });
       }
 
