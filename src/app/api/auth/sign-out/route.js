@@ -16,7 +16,7 @@ export const POST = apiHandler(async () => {
         options: {
           httpOnly: true,
           path: "/",
-          maxAge: 0, // Expire the cookie immediately
+          maxAge: 0,
         },
       },
     ],

@@ -4,7 +4,7 @@ import { HttpStatusCode } from "@/constants/HttpStatusCode";
 import { MESSAGE } from "@/lib/message";
 import { REFRESH_TOKEN_EXPIRATION_SECONDS } from "@/constants/ApplicationConstant";
 
-export const POST = apiHandler(async (req) => {
+export const POST = apiHandler(async ({ req }) => {
   const reqBody = await req.json();
   const { accessToken, refreshToken } = await AuthController.logIn(reqBody);
 

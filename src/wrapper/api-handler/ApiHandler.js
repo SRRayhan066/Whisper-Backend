@@ -20,9 +20,9 @@ export const apiHandler = (handler) => {
         try {
           const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-          if (decoded.userId && decoded.email) {
+          if (decoded.id && decoded.email) {
             user = {
-              userId: decoded.userId,
+              id: decoded.id,
               email: decoded.email,
             };
           }
@@ -31,7 +31,7 @@ export const apiHandler = (handler) => {
         }
       }
 
-      const result = await handler(req, context, user);
+      const result = await handler({ req, context, user });
 
       const status = result?.status || HttpStatusCode.OK;
 

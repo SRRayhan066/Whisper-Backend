@@ -16,7 +16,7 @@ export function middleware(request) {
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    if (!decoded.userId || !decoded.email) {
+    if (!decoded.id || !decoded.email) {
       return NextResponse.json(
         { error: MESSAGE.API.ERROR.INVALID_TOKEN },
         { status: 401 }
