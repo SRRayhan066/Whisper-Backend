@@ -13,6 +13,7 @@ export const MESSAGE = {
       REFRESH_TOKEN_NOT_FOUND: "Refresh token not found.",
       NO_TOKEN: "No token provided",
       TOKEN_EXPIRED: "Token expired",
+      INVALID_TOKEN: "Invalid or malformed token",
     },
   },
 };

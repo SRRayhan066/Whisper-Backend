@@ -14,17 +14,24 @@ export function middleware(request) {
   }
 
   try {
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    if (!decoded.userId || !decoded.email) {
+      return NextResponse.json(
+        { error: MESSAGE.API.ERROR.INVALID_TOKEN },
+        { status: 401 }
+      );
+    }
 
     return NextResponse.next();
   } catch (error) {
     return NextResponse.json(
-      { error: MESSAGE.API.TOKEN_EXPIRED },
+      { error: MESSAGE.API.ERROR.TOKEN_EXPIRED },
       { status: 401 }
     );
   }
 }
 
 export const config = {
-  matcher: "/api/protected/:path*",
+  matcher: "/api/(protected)/:path*",
 };

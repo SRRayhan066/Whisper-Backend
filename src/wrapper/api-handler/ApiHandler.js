@@ -3,6 +3,7 @@ import { connectDB } from "@/config/db";
 import { connectRedis } from "@/config/redis";
 import { HttpStatusCode } from "@/constants/HttpStatusCode";
 import { ApiError } from "../api-error/ApiError";
+import jwt from "jsonwebtoken";
 
 export const apiHandler = (handler) => {
   return async (req, context) => {
@@ -10,7 +11,27 @@ export const apiHandler = (handler) => {
       await connectDB();
       await connectRedis();
 
-      const result = await handler(req, context);
+      let user = null;
+
+      const authHeader = req.headers.get("Authorization");
+      const token = authHeader?.split(" ")[1];
+
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+          if (decoded.userId && decoded.email) {
+            user = {
+              userId: decoded.userId,
+              email: decoded.email,
+            };
+          }
+        } catch (error) {
+          user = null;
+        }
+      }
+
+      const result = await handler(req, context, user);
 
       const status = result?.status || HttpStatusCode.OK;
 
@@ -23,7 +44,6 @@ export const apiHandler = (handler) => {
         { status }
       );
 
-      // New flexible cookie handling
       if (Array.isArray(result.cookies)) {
         result.cookies.forEach((cookie) => {
           response.cookies.set(cookie.name, cookie.value, cookie.options);
