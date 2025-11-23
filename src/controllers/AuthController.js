@@ -14,7 +14,7 @@ export class AuthController {
   }
 
   static async reissueAccessToken() {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!refreshToken) {
