@@ -14,7 +14,7 @@ export const POST = apiHandler(async ({ req, user }) => {
 
   return {
     data: newMessage,
-    status: HttpStatusCode.CREATED,
+    status: HttpStatusCode.OK,
     message: "Message sent successfully",
   };
 });
